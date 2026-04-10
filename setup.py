@@ -18,13 +18,12 @@ with open('notifications/__init__.py', 'rb') as f:
 
 
 setup(
-    name='django-notifications-hq',
+    name='django-notifications-x',
     version=version,
     description='GitHub notifications alike app for Django.',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author='django-notifications team',
-    author_email='yang@yangyubo.com',
+    author='PanovYury',
     url='http://github.com/django-notifications/django-notifications',
     install_requires=[
         'django>=4.2,<5.3',
@@ -69,5 +68,5 @@ setup(
         'Topic :: Utilities'
     ],
     keywords='django notifications github action event stream',
-    license='MIT',
+    license='BSD-3-Clause',
 )
