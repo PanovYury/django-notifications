@@ -489,7 +489,7 @@ class NotificationTestPages(TestCase):
         request = factory.get('/notification/live_updater')
         request.user = self.to_user
 
-        render(request, 'notifications/test_tags.html', {'request': request, 'nonce': 'nonce-T5esDNXMnDe5lKMQ6ZzTUw=='})
+        render(request, 'notifications/test_tags.html', {'nonce': 'nonce-T5esDNXMnDe5lKMQ6ZzTUw=='})
 
         # TODO: Add more tests to check what is being output.
 
