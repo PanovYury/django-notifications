@@ -1,10 +1,12 @@
 # `django-notifications` Documentation
 
-[![build-status](https://travis-ci.org/django-notifications/django-notifications.svg)](https://travis-ci.org/django-notifications/django-notifications)
-[![Coverage Status](https://coveralls.io/repos/github/django-notifications/django-notifications/badge.svg?branch=master)](https://coveralls.io/github/django-notifications/django-notifications?branch=master)
+[//]: # (TODO: Implement for the current repository)
+[//]: # ([![build-status]&#40;https://travis-ci.org/django-notifications/django-notifications.svg&#41;]&#40;https://travis-ci.org/django-notifications/django-notifications&#41;)
+[//]: # ([![Coverage Status]&#40;https://coveralls.io/repos/github/django-notifications/django-notifications/badge.svg?branch=master&#41;]&#40;https://coveralls.io/github/django-notifications/django-notifications?branch=master&#41;)
 
+> 🔀 This is a fork of [original](https://github.com/django-notifications/django-notifications)
 
-[django-notifications](https://github.com/django-notifications/django-notifications) is a GitHub notification alike app for Django, it was derived from [django-activity-stream](https://github.com/justquick/django-activity-stream)
+[django-notifications](https://github.com/PanovYury/django-notifications) is a GitHub notification alike app for Django, it was derived from [django-activity-stream](https://github.com/justquick/django-activity-stream)
 
 The major difference between `django-notifications` and `django-activity-stream`:
 
@@ -51,10 +53,10 @@ $ pip install django-notifications-x
 or get it from source
 
 ```bash
-$ git clone https://github.com/django-notifications/django-notifications
+$ git clone https://github.com/PanovYury/django-notifications
 $ cd django-notifications
-$ python setup.py sdist
-$ pip install dist/django-notifications-x*
+$ python setup.py bdist_wheel
+$ pip install dist/django_notifications_x*
 ```
 
 Note that [django-model-utils](http://pypi.python.org/pypi/django-model-utils)
@@ -499,20 +501,3 @@ python manage.py runserver
 # Unset SAMPLE_APP to remove sample_notifications app from list of INSTALLED_APPS
 unset SAMPLE_APP
 ```
-
-## `django-notifications` Team
-
-Core contributors (in alphabetical order):
-
--   [Alvaro Leonel](https://github.com/AlvaroLQueiroz)
--   [Federico Capoano](https://github.com/nemesisdesign)
--   [Samuel Spencer](https://github.com/LegoStormtroopr)
--   [Yang Yubo](https://github.com/yangyubo)
--   [YPCrumble](https://github.com/YPCrumble)
--   [Zhongyuan Zhang](https://github.com/zhang-z)
-
-## Contribute
-
-We are looking for contributors, for anyone who\'d like to contribute
-and willing to put time and energy on this project, please contact [Yang
-Yubo](https://github.com/yangyubo).
