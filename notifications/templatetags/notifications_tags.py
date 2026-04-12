@@ -1,45 +1,29 @@
-''' Django notifications template tags file '''
-# -*- coding: utf-8 -*-
-from django import get_version
+""" Django notifications template tags file """
+
+from django.urls import reverse
 from django.core.cache import cache
 from django.template import Library
 from django.utils.html import format_html
-from packaging.version import (
-    parse as parse_version,  # pylint: disable=no-name-in-module,import-error
-)
 
 from notifications import settings
-from notifications.settings import get_config
 
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import (
-        reverse,  # pylint: disable=no-name-in-module,import-error
-    )
 
 register = Library()
 
 
 def get_cached_notification_unread_count(user):
-
     return cache.get_or_set(
         'cache_notification_unread_count',
         user.notifications.unread().count,
         settings.get_config()['CACHE_TIMEOUT']
     )
 
+@register.simple_tag(takes_context=True)
 def notifications_unread(context):
     user = user_context(context)
     if not user:
         return ''
     return get_cached_notification_unread_count(user)
-
-
-if parse_version(get_version()) >= parse_version('2.0'):
-    notifications_unread = register.simple_tag(takes_context=True)(notifications_unread)  # pylint: disable=invalid-name
-else:
-    notifications_unread = register.assignment_tag(takes_context=True)(notifications_unread)  # noqa
 
 
 @register.filter
@@ -68,7 +52,14 @@ def register_notify_callbacks(badge_class='live_notify_badge',  # pylint: disabl
         api_url = reverse('notifications:live_unread_notification_count')
     else:
         return ""
+
+    callbacks_script = ''.join([
+        f"register_notifier({callback});"
+        for callback in callbacks.split(',')
+    ])
+
     definitions = """
+    <script type="text/javascript"{nonce}>
         notify_badge_class='{badge_class}';
         notify_menu_class='{menu_class}';
         notify_api_url='{api_url}';
@@ -77,7 +68,16 @@ def register_notify_callbacks(badge_class='live_notify_badge',  # pylint: disabl
         notify_mark_all_unread_url='{mark_all_unread_url}';
         notify_refresh_period={refresh};
         notify_mark_as_read={mark_as_read};
-    """.format(
+        {callbacks_script}
+    </script>
+    """
+
+    # add a nonce value to the script tag if one is provided
+    nonce_str = nonce or ""
+
+    return format_html(
+        definitions,
+        nonce=nonce_str,
         badge_class=badge_class,
         menu_class=menu_class,
         refresh=refresh_period,
@@ -85,17 +85,9 @@ def register_notify_callbacks(badge_class='live_notify_badge',  # pylint: disabl
         unread_url=reverse('notifications:unread'),
         mark_all_unread_url=reverse('notifications:mark_all_as_read'),
         fetch_count=fetch,
-        mark_as_read=str(mark_as_read).lower()
+        mark_as_read=str(mark_as_read).lower(),
+        callbacks_script=callbacks_script
     )
-
-    # add a nonce value to the script tag if one is provided
-    nonce_str = ' nonce="{nonce}"'.format(nonce=nonce) if nonce else ""
-
-    script = '<script type="text/javascript"{nonce}>'.format(nonce=nonce_str) + definitions
-    for callback in callbacks.split(','):
-        script += "register_notifier(" + callback + ");"
-    script += "</script>"
-    return format_html(script)
 
 
 @register.simple_tag(takes_context=True)
@@ -104,16 +96,14 @@ def live_notify_badge(context, badge_class='live_notify_badge'):
     if not user:
         return ''
 
-    html = "<span class='{badge_class}'>{unread}</span>".format(
-        badge_class=badge_class, unread=get_cached_notification_unread_count(user)
-    )
-    return format_html(html)
+    html = "<span class='{badge_class}'>{unread}</span>"
+    return format_html(html, badge_class=badge_class, unread=get_cached_notification_unread_count(user))
 
 
 @register.simple_tag
 def live_notify_list(list_class='live_notify_list'):
-    html = "<ul class='{list_class}'></ul>".format(list_class=list_class)
-    return format_html(html)
+    html = "<ul class='{list_class}'></ul>"
+    return format_html(html, list_class=list_class)
 
 
 def user_context(context):
@@ -122,11 +112,7 @@ def user_context(context):
 
     request = context['request']
     user = request.user
-    try:
-        user_is_anonymous = user.is_anonymous()
-    except TypeError:  # Django >= 1.11
-        user_is_anonymous = user.is_anonymous
 
-    if user_is_anonymous:
+    if not user.is_authenticated:
         return None
     return user
