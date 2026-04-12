@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-notifications-x"
-version = "0.1.1"
 description = "GitHub notifications alike app for Django."
+requires-python = ">=3.11"
 readme = "README.md"
 license = "BSD-3-Clause"
 authors = [
@@ -55,32 +55,35 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Web Environment",
     "Framework :: Django",
-    "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
     "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Utilities",
 ]
 dependencies = [
     "django-model-utils>=3.1.0",
-    "django>=4.2,<5.3",
+    "django>=5.0,<6.1",
     "jsonfield>=2.1.0",
     "packaging",
     "swapper",
 ]
+dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://github.com/PanovYury/django-notifications"
+
+[tool.hatch.version]
+path = "notifications/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
