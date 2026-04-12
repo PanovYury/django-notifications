@@ -71,9 +71,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
-    "django-model-utils>=3.1.0",
     "django>=5.0,<6.1",
-    "jsonfield>=2.1.0",
     "packaging",
     "swapper",
 ]
