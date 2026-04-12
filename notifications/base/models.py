@@ -1,40 +1,21 @@
-# -*- coding: utf-8 -*-
 # pylint: disable=too-many-lines
-from django import get_version
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models.query import QuerySet
+from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
-from jsonfield.fields import JSONField
-from model_utils import Choices
-from packaging.version import (
-    parse as parse_version,  # pylint: disable=no-name-in-module,import-error
-)
 from swapper import load_model
 
 from notifications import settings as notifications_settings
 from notifications.signals import notify
 from notifications.utils import id2slug
 
-if parse_version(get_version()) >= parse_version('1.8.0'):
-    from django.contrib.contenttypes.fields import GenericForeignKey  # noqa
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey  # noqa
-
-try:
-    # Django >= 1.7
-    from django.urls import NoReverseMatch, reverse
-except ImportError:
-    # Django <= 1.6
-    from django.core.urlresolvers import (  # pylint: disable=no-name-in-module,import-error
-        NoReverseMatch,
-        reverse,
-    )
 
 EXTRA_DATA = notifications_settings.get_config()['USE_JSONFIELD']
 
@@ -53,7 +34,7 @@ def assert_soft_delete():
 
 
 class NotificationQuerySet(models.query.QuerySet):
-    ''' Notification QuerySet '''
+    """ Notification QuerySet """
     def unsent(self):
         return self.filter(emailed=False)
 
@@ -177,8 +158,13 @@ class AbstractNotification(models.Model):
         <a href="http://oebfare.com/">brosner</a> commented on <a href="http://github.com/pinax/pinax">pinax/pinax</a> 2 hours ago # noqa
 
     """
-    LEVELS = Choices('success', 'info', 'warning', 'error')
-    level = models.CharField(_('level'), choices=LEVELS, default=LEVELS.info, max_length=20)
+    class LEVELS(models.TextChoices):
+        success = 'success', _('success')
+        info = 'info', _('info')
+        warning = 'warning', _('warning')
+        error = 'error', _('error')
+
+    level = models.CharField(_('level'), choices=LEVELS.choices, default=LEVELS.info, max_length=20)
 
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -232,7 +218,7 @@ class AbstractNotification(models.Model):
     deleted = models.BooleanField(_('deleted'), default=False, db_index=True)
     emailed = models.BooleanField(_('emailed'), default=False, db_index=True)
 
-    data = JSONField(_('data'), blank=True, null=True)
+    data = models.JSONField(_('data'), blank=True, null=True)
 
     objects = NotificationQuerySet.as_manager()
 
